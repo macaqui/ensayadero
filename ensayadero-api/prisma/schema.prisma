@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Los instrumentos que hay en el ensayadero
+model Instrumento {
+  id          Int       @id @default(autoincrement())
+  nombre      String    @unique
+  descripcion String?
+  reservas    Reserva[]
+}
+
+// Las reservas que se hacen para cada instrumento
+model Reserva {
+  id            Int         @id @default(autoincrement())
+  solicitante   String
+  inicio        DateTime
+  fin           DateTime
+  instrumentoId Int
+  instrumento   Instrumento @relation(fields: [instrumentoId], references: [id], onDelete: Cascade)
+  creadaEn      DateTime    @default(now())
+
+  @@index([instrumentoId, inicio, fin])
+}
